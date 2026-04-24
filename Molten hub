@@ -207,7 +207,7 @@ local function startMainGui()
         else
             delayBox.Text = tostring(spamDelay)
         end
-    end)
+    end
 
     -- AutoReset
     local resetBtn = button("AutoReset: OFF", 0.38)

@@ -2,6 +2,7 @@ local Players             = game:GetService("Players")
 local RunService          = game:GetService("RunService")
 local UserInputService    = game:GetService("UserInputService")
 local VirtualInputManager = game:GetService("VirtualInputManager")
+local TweenService        = game:GetService("TweenService")
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
@@ -63,15 +64,118 @@ MovementTab:CreateToggle({
         if val and not sideDashLoaded then
             sideDashLoaded = true
             task.spawn(function()
-                Rayfield:Notify({
-                    Title    = "Side Dash Assist V3",
-                    Content  = "Made by Molten 🔥 — Loading...",
-                    Duration = 3,
-                    Image    = 4483362458,
+
+                -- ✅ SPLASH SCREEN
+                local splash = Instance.new("ScreenGui", playerGui)
+                splash.ResetOnSpawn = false
+                splash.IgnoreGuiInset = true
+                splash.DisplayOrder = 999
+
+                local bg = Instance.new("Frame", splash)
+                bg.Size = UDim2.fromScale(1, 1)
+                bg.BackgroundColor3 = Color3.fromRGB(20, 0, 40)
+                bg.BorderSizePixel = 0
+                bg.BackgroundTransparency = 1
+
+                local grad = Instance.new("UIGradient", bg)
+                grad.Color = ColorSequence.new({
+                    ColorSequenceKeypoint.new(0,   Color3.fromRGB(76,  0,  130)),
+                    ColorSequenceKeypoint.new(0.3, Color3.fromRGB(138, 43, 226)),
+                    ColorSequenceKeypoint.new(0.6, Color3.fromRGB(75,  0,  130)),
+                    ColorSequenceKeypoint.new(1,   Color3.fromRGB(148, 0,  211)),
                 })
+                grad.Rotation = 45
+
+                local title = Instance.new("TextLabel", bg)
+                title.Size = UDim2.fromScale(1, 0.25)
+                title.Position = UDim2.fromScale(0, 0.28)
+                title.BackgroundTransparency = 1
+                title.Text = "MOLTEN DASH TECH"
+                title.Font = Enum.Font.GothamBold
+                title.TextScaled = true
+                title.TextColor3 = Color3.new(1, 1, 1)
+                title.TextTransparency = 1
+
+                local v3Label = Instance.new("TextLabel", bg)
+                v3Label.Size = UDim2.fromScale(1, 0.12)
+                v3Label.Position = UDim2.fromScale(0, 0.53)
+                v3Label.BackgroundTransparency = 1
+                v3Label.Text = "V3"
+                v3Label.Font = Enum.Font.GothamBold
+                v3Label.TextScaled = true
+                v3Label.TextColor3 = Color3.fromRGB(200, 100, 255)
+                v3Label.TextTransparency = 1
+
+                local credit = Instance.new("TextLabel", bg)
+                credit.Size = UDim2.fromScale(1, 0.07)
+                credit.Position = UDim2.fromScale(0, 0.66)
+                credit.BackgroundTransparency = 1
+                credit.Text = "Made by Molten 🔥"
+                credit.Font = Enum.Font.Code
+                credit.TextScaled = true
+                credit.TextColor3 = Color3.fromRGB(180, 100, 255)
+                credit.TextTransparency = 1
+
+                local barBg = Instance.new("Frame", bg)
+                barBg.Size = UDim2.new(0.6, 0, 0, 6)
+                barBg.Position = UDim2.new(0.2, 0, 0.8, 0)
+                barBg.BackgroundColor3 = Color3.fromRGB(60, 0, 100)
+                barBg.BorderSizePixel = 0
+                barBg.BackgroundTransparency = 1
+                Instance.new("UICorner", barBg).CornerRadius = UDim.new(1, 0)
+
+                local barFill = Instance.new("Frame", barBg)
+                barFill.Size = UDim2.fromScale(0, 1)
+                barFill.BackgroundColor3 = Color3.fromRGB(180, 0, 255)
+                barFill.BorderSizePixel = 0
+                Instance.new("UICorner", barFill).CornerRadius = UDim.new(1, 0)
+
+                -- Rainbow gradient rotation + colour cycling
+                local conn
+                conn = RunService.Heartbeat:Connect(function()
+                    if not splash or not splash.Parent then
+                        conn:Disconnect()
+                        return
+                    end
+                    grad.Rotation = (grad.Rotation + 0.5) % 360
+                    local hue = tick() * 0.25 % 1
+                    title.TextColor3 = Color3.fromHSV(hue, 0.4, 1)
+                    v3Label.TextColor3 = Color3.fromHSV((hue + 0.3) % 1, 0.6, 1)
+                    barFill.BackgroundColor3 = Color3.fromHSV((hue + 0.6) % 1, 1, 1)
+                    credit.TextColor3 = Color3.fromHSV((hue + 0.5) % 1, 0.5, 1)
+                end)
+
+                -- Fade in bg
+                TweenService:Create(bg, TweenInfo.new(0.4), {BackgroundTransparency = 0}):Play()
+                task.wait(0.3)
+                TweenService:Create(barBg, TweenInfo.new(0.3), {BackgroundTransparency = 0}):Play()
+
+                -- Fade in text
+                TweenService:Create(title, TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
+                task.wait(0.35)
+                TweenService:Create(v3Label, TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
+                task.wait(0.3)
+                TweenService:Create(credit, TweenInfo.new(0.4), {TextTransparency = 0}):Play()
+
+                -- ✅ Loading bar over 5.5 seconds so Made by Molten is visible
+                TweenService:Create(barFill, TweenInfo.new(5.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.fromScale(1, 1)}):Play()
+                task.wait(5.5)
+
+                -- Load real script
                 loadstring(game:HttpGet(
                     "https://api.getpolsec.com/scripts/hosted/23bcf4264b586dc93b16a9b054eddae259938b7421ac5096353079b2e9d74e24.lua"
                 ))()
+
+                -- Fade out
+                TweenService:Create(bg, TweenInfo.new(0.6), {BackgroundTransparency = 1}):Play()
+                TweenService:Create(title, TweenInfo.new(0.6), {TextTransparency = 1}):Play()
+                TweenService:Create(v3Label, TweenInfo.new(0.6), {TextTransparency = 1}):Play()
+                TweenService:Create(credit, TweenInfo.new(0.6), {TextTransparency = 1}):Play()
+                TweenService:Create(barBg, TweenInfo.new(0.6), {BackgroundTransparency = 1}):Play()
+                task.wait(0.7)
+                conn:Disconnect()
+                splash:Destroy()
+
             end)
         elseif val then
             Rayfield:Notify({
@@ -408,15 +512,10 @@ local function doXCZ()
     xczCooldown = false
 end
 
--- ══════════════════════════════════════════
---  E Key — XCZ priority over Side Dash
--- ══════════════════════════════════════════
 UserInputService.InputBegan:Connect(function(input, gp)
     if gp then return end
-    if input.KeyCode == Enum.KeyCode.E then
-        if xczEnabled then
-            task.spawn(doXCZ)
-        end
+    if input.KeyCode == Enum.KeyCode.E and xczEnabled then
+        task.spawn(doXCZ)
     end
 end)
 

@@ -1,662 +1,522 @@
-local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
+local Players             = game:GetService("Players")
+local RunService          = game:GetService("RunService")
+local UserInputService    = game:GetService("UserInputService")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
-local KEY = "sexy_Molten"
+local Rayfield = loadstring(game:HttpGet(
+    "https://sirius.menu/rayfield"
+))()
 
-local C = {
-    bg       = Color3.fromRGB(10, 10, 11),
-    panel    = Color3.fromRGB(18, 18, 22),
-    surface  = Color3.fromRGB(13, 13, 16),
-    border   = Color3.fromRGB(30, 30, 36),
-    btnOff   = Color3.fromRGB(28, 28, 34),
-    fire1    = Color3.fromRGB(255, 69,  0),
-    fire2    = Color3.fromRGB(255, 110, 0),
-    fire3    = Color3.fromRGB(255, 170, 0),
-    white    = Color3.new(1, 1, 1),
-    muted    = Color3.fromRGB(90, 85, 100),
-    inputBg  = Color3.fromRGB(22, 22, 28),
-}
+local keySpam        = false
+local spamDelay      = 0.12
+local deathTP        = false
+local lastDeathCFrame
+local loopGoto       = false
+local loopTargetName = ""
+local autoReset      = false
+local resetDelay     = 2
+local m1Spam         = false
+local m1Delay        = 0.1
+local xczEnabled     = false
+local xczCooldown    = false
+local sideDash       = false
+local sideDashLoaded = false
 
-local function getRainbow(offset)
-    offset = offset or 0
-    local t = (tick() + offset) % 5 / 5
-    return Color3.fromHSV(t, 1, 1)
-end
+local Window = Rayfield:CreateWindow({
+    Name             = "🔥 MOLTEN HUB",
+    Icon             = 0,
+    LoadingTitle     = "MOLTEN HUB",
+    LoadingSubtitle  = "THE STRONGEST BATTLEGROUNDS",
+    Theme            = "Dark",
+    DisableRayfieldPrompts = false,
+    DisableBuildWarnings   = false,
+    ConfigurationSaving = {
+        Enabled    = true,
+        FolderName = "MoltenHub",
+        FileName   = "MoltenHub_Config",
+    },
+    Discord = {
+        Enabled = false,
+    },
+    KeySystem = false,
+})
 
-local function corner(parent, radius)
-    local c = Instance.new("UICorner", parent)
-    c.CornerRadius = UDim.new(0, radius or 8)
-    return c
-end
+local MovementTab = Window:CreateTab("Movement", 4483362458)
+local CombatTab   = Window:CreateTab("Combat",   4483345998)
+local UtilityTab  = Window:CreateTab("Utility",  4483362458)
 
-local function stroke(parent, thickness, color)
-    local s = Instance.new("UIStroke", parent)
-    s.Thickness = thickness or 1
-    s.Color = color or C.border
-    return s
-end
+-- ══════════════════════════════════════════
+--  MOVEMENT TAB
+-- ══════════════════════════════════════════
 
-local function gradient(parent, c0, c1, rot)
-    local g = Instance.new("UIGradient", parent)
-    g.Color = ColorSequence.new(c0, c1)
-    g.Rotation = rot or 90
-    return g
-end
+MovementTab:CreateSection("Side Dash Assist")
 
-local keyGui = Instance.new("ScreenGui")
-keyGui.ResetOnSpawn = false
-keyGui.IgnoreGuiInset = true
-keyGui.Parent = playerGui
-
-local dimBg = Instance.new("Frame", keyGui)
-dimBg.Size = UDim2.fromScale(1, 1)
-dimBg.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-dimBg.BackgroundTransparency = 0.45
-dimBg.BorderSizePixel = 0
-
-local keyCard = Instance.new("Frame", keyGui)
-keyCard.Size = UDim2.fromOffset(320, 230)
-keyCard.AnchorPoint = Vector2.new(0.5, 0.5)
-keyCard.Position = UDim2.fromScale(0.5, 0.5)
-keyCard.BackgroundColor3 = C.panel
-keyCard.BorderSizePixel = 0
-corner(keyCard, 14)
-local keyCardStroke = stroke(keyCard, 1, C.border)
-
-local keyAccent = Instance.new("Frame", keyCard)
-keyAccent.Size = UDim2.new(1, 0, 0, 2)
-keyAccent.Position = UDim2.fromOffset(0, 0)
-keyAccent.BackgroundColor3 = C.fire1
-keyAccent.BorderSizePixel = 0
-corner(keyAccent, 2)
-gradient(keyAccent, C.fire1, C.fire3, 0)
-
-local uiScale = Instance.new("UIScale", keyCard)
-uiScale.Scale = 0
-TweenService:Create(uiScale, TweenInfo.new(0.45, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Scale = 1}):Play()
-
-local keyIcon = Instance.new("TextLabel", keyCard)
-keyIcon.Size = UDim2.fromOffset(44, 44)
-keyIcon.Position = UDim2.new(0.5, -22, 0, 22)
-keyIcon.BackgroundColor3 = Color3.fromRGB(30, 18, 10)
-keyIcon.Text = "🔥"
-keyIcon.TextScaled = true
-keyIcon.Font = Enum.Font.GothamBold
-keyIcon.TextColor3 = C.white
-keyIcon.BorderSizePixel = 0
-corner(keyIcon, 10)
-stroke(keyIcon, 1, Color3.fromRGB(80, 40, 10))
-
-local keyTitle = Instance.new("TextLabel", keyCard)
-keyTitle.Size = UDim2.new(1, 0, 0, 28)
-keyTitle.Position = UDim2.new(0, 0, 0, 74)
-keyTitle.BackgroundTransparency = 1
-keyTitle.Text = "MOLTEN HUB"
-keyTitle.Font = Enum.Font.GothamBold
-keyTitle.TextScaled = true
-keyTitle.TextColor3 = C.fire2
-
-local keySub = Instance.new("TextLabel", keyCard)
-keySub.Size = UDim2.new(1, 0, 0, 16)
-keySub.Position = UDim2.new(0, 0, 0, 104)
-keySub.BackgroundTransparency = 1
-keySub.Text = "// AUTHENTICATION REQUIRED"
-keySub.Font = Enum.Font.Code
-keySub.TextScaled = true
-keySub.TextColor3 = C.muted
-
-local keyBox = Instance.new("TextBox", keyCard)
-keyBox.Size = UDim2.new(1, -32, 0, 38)
-keyBox.Position = UDim2.new(0, 16, 0, 130)
-keyBox.PlaceholderText = "Enter your key..."
-keyBox.Text = ""
-keyBox.Font = Enum.Font.Code
-keyBox.TextScaled = true
-keyBox.BackgroundColor3 = C.inputBg
-keyBox.TextColor3 = C.white
-keyBox.PlaceholderColor3 = C.muted
-keyBox.ClearTextOnFocus = false
-keyBox.BorderSizePixel = 0
-corner(keyBox, 8)
-stroke(keyBox, 1, C.border)
-
-local submit = Instance.new("TextButton", keyCard)
-submit.Size = UDim2.new(1, -32, 0, 38)
-submit.Position = UDim2.new(0, 16, 0, 178)
-submit.Text = "UNLOCK"
-submit.Font = Enum.Font.GothamBold
-submit.TextScaled = true
-submit.TextColor3 = C.white
-submit.BackgroundColor3 = C.fire1
-submit.BorderSizePixel = 0
-corner(submit, 8)
-gradient(submit, C.fire1, C.fire2, 0)
-local submitStroke = stroke(submit, 1, C.fire2)
-
-local keyRainbowConn
-keyRainbowConn = RunService.Heartbeat:Connect(function()
-    if not keyGui or not keyGui.Parent then keyRainbowConn:Disconnect() return end
-    keyCardStroke.Color = getRainbow(0)
-    submitStroke.Color  = getRainbow(0.3)
-    keyTitle.TextColor3 = getRainbow(0.6)
-end)
-
-local function startMainGui()
-    TweenService:Create(uiScale, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Scale = 0}):Play()
-    task.wait(0.22)
-    keyGui:Destroy()
-
-    local keySpam        = false
-    local spamDelay      = 0.12
-    local deathTP        = false
-    local lastDeathCFrame
-    local loopGoto       = false
-    local loopTargetName = ""
-    local autoReset      = false
-    local resetDelay     = 2
-    local m1Spam         = false
-    local m1Delay        = 0.1
-    local xczCooldown    = false
-
-    local gui = Instance.new("ScreenGui", playerGui)
-    gui.ResetOnSpawn = false
-    gui.IgnoreGuiInset = true
-
-    local toggleBtn = Instance.new("TextButton", gui)
-    toggleBtn.Size = UDim2.fromOffset(42, 42)
-    toggleBtn.Position = UDim2.new(0, 8, 0.5, -21)
-    toggleBtn.Text = "🔥"
-    toggleBtn.TextScaled = true
-    toggleBtn.Font = Enum.Font.GothamBold
-    toggleBtn.BackgroundColor3 = C.panel
-    toggleBtn.TextColor3 = C.white
-    toggleBtn.BorderSizePixel = 0
-    corner(toggleBtn, 10)
-    local toggleStroke = stroke(toggleBtn, 1, C.fire1)
-
-    local frame = Instance.new("Frame", gui)
-    frame.Size = UDim2.fromOffset(340, 520)
-    frame.Position = UDim2.new(0, 60, 0.5, -260)
-    frame.BackgroundColor3 = C.panel
-    frame.BorderSizePixel = 0
-    corner(frame, 14)
-    local frameStroke = stroke(frame, 1, C.border)
-
-    local mainScale = Instance.new("UIScale", frame)
-    mainScale.Scale = 0
-    TweenService:Create(mainScale, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Scale = 1}):Play()
-
-    local topBar = Instance.new("Frame", frame)
-    topBar.Size = UDim2.new(1, 0, 0, 52)
-    topBar.BackgroundColor3 = C.surface
-    topBar.BorderSizePixel = 0
-    corner(topBar, 14)
-
-    local topBarFill = Instance.new("Frame", topBar)
-    topBarFill.Size = UDim2.new(1, 0, 0.5, 0)
-    topBarFill.Position = UDim2.fromScale(0, 0.5)
-    topBarFill.BackgroundColor3 = C.surface
-    topBarFill.BorderSizePixel = 0
-
-    local titleLine = Instance.new("Frame", frame)
-    titleLine.Size = UDim2.new(1, -24, 0, 1)
-    titleLine.Position = UDim2.fromOffset(12, 52)
-    titleLine.BackgroundColor3 = C.fire1
-    titleLine.BorderSizePixel = 0
-    gradient(titleLine, C.fire1, C.fire3, 0)
-
-    local hubIcon = Instance.new("TextLabel", topBar)
-    hubIcon.Size = UDim2.fromOffset(32, 32)
-    hubIcon.Position = UDim2.fromOffset(12, 10)
-    hubIcon.BackgroundColor3 = Color3.fromRGB(30, 18, 10)
-    hubIcon.Text = "🔥"
-    hubIcon.TextScaled = true
-    hubIcon.Font = Enum.Font.GothamBold
-    hubIcon.TextColor3 = C.white
-    hubIcon.BorderSizePixel = 0
-    corner(hubIcon, 8)
-
-    local hubTitle = Instance.new("TextLabel", topBar)
-    hubTitle.Size = UDim2.new(1, -100, 0, 20)
-    hubTitle.Position = UDim2.fromOffset(52, 8)
-    hubTitle.BackgroundTransparency = 1
-    hubTitle.Text = "MOLTEN HUB"
-    hubTitle.Font = Enum.Font.GothamBold
-    hubTitle.TextScaled = true
-    hubTitle.TextColor3 = C.fire2
-
-    local hubSub = Instance.new("TextLabel", topBar)
-    hubSub.Size = UDim2.new(1, -100, 0, 14)
-    hubSub.Position = UDim2.fromOffset(52, 30)
-    hubSub.BackgroundTransparency = 1
-    hubSub.Text = "THE STRONGEST BATTLEGROUNDS"
-    hubSub.Font = Enum.Font.Code
-    hubSub.TextScaled = true
-    hubSub.TextColor3 = C.muted
-
-    do
-        local dragging, startPos, startInput
-        topBar.InputBegan:Connect(function(i)
-            if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
-                dragging = true
-                startInput = i.Position
-                startPos = frame.Position
-            end
-        end)
-        UserInputService.InputChanged:Connect(function(i)
-            if dragging then
-                local delta = i.Position - startInput
-                frame.Position = UDim2.new(
-                    startPos.X.Scale, startPos.X.Offset + delta.X,
-                    startPos.Y.Scale, startPos.Y.Offset + delta.Y
-                )
-            end
-        end)
-        UserInputService.InputEnded:Connect(function()
-            dragging = false
-        end)
-    end
-
-    local scroll = Instance.new("ScrollingFrame", frame)
-    scroll.Size = UDim2.new(1, 0, 1, -68)
-    scroll.Position = UDim2.fromOffset(0, 58)
-    scroll.BackgroundTransparency = 1
-    scroll.BorderSizePixel = 0
-    scroll.ScrollBarThickness = 3
-    scroll.ScrollBarImageColor3 = C.fire1
-    scroll.CanvasSize = UDim2.fromOffset(0, 0)
-    scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
-
-    local listLayout = Instance.new("UIListLayout", scroll)
-    listLayout.Padding = UDim.new(0, 6)
-    listLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-
-    local scrollPad = Instance.new("UIPadding", scroll)
-    scrollPad.PaddingLeft   = UDim.new(0, 12)
-    scrollPad.PaddingRight  = UDim.new(0, 12)
-    scrollPad.PaddingTop    = UDim.new(0, 10)
-    scrollPad.PaddingBottom = UDim.new(0, 10)
-
-    local statusBar = Instance.new("Frame", frame)
-    statusBar.Size = UDim2.new(1, 0, 0, 28)
-    statusBar.Position = UDim2.new(0, 0, 1, -28)
-    statusBar.BackgroundColor3 = C.surface
-    statusBar.BorderSizePixel = 0
-    corner(statusBar, 14)
-
-    local statusFill = Instance.new("Frame", statusBar)
-    statusFill.Size = UDim2.new(1, 0, 0.5, 0)
-    statusFill.BackgroundColor3 = C.surface
-    statusFill.BorderSizePixel = 0
-
-    local statusDot = Instance.new("Frame", statusBar)
-    statusDot.Size = UDim2.fromOffset(6, 6)
-    statusDot.Position = UDim2.fromOffset(12, 11)
-    statusDot.BackgroundColor3 = C.fire2
-    statusDot.BorderSizePixel = 0
-    corner(statusDot, 3)
-
-    local statusText = Instance.new("TextLabel", statusBar)
-    statusText.Size = UDim2.new(1, -20, 1, 0)
-    statusText.Position = UDim2.fromOffset(22, 0)
-    statusText.BackgroundTransparency = 1
-    statusText.Text = "ACTIVE  ·  0 features on"
-    statusText.Font = Enum.Font.Code
-    statusText.TextScaled = true
-    statusText.TextXAlignment = Enum.TextXAlignment.Left
-    statusText.TextColor3 = C.muted
-
-    local allStrokes = {frameStroke, toggleStroke}
-    local activeCount = 0
-
-    local function updateStatus()
-        statusText.Text = "ACTIVE  ·  " .. activeCount .. " feature" .. (activeCount ~= 1 and "s" or "") .. " on"
-    end
-
-    local function sectionLabel(text)
-        local lbl = Instance.new("TextLabel", scroll)
-        lbl.Size = UDim2.new(1, 0, 0, 18)
-        lbl.BackgroundTransparency = 1
-        lbl.Text = "// " .. text
-        lbl.Font = Enum.Font.Code
-        lbl.TextScaled = true
-        lbl.TextXAlignment = Enum.TextXAlignment.Left
-        lbl.TextColor3 = C.muted
-        return lbl
-    end
-
-    local function featureRow(name, desc)
-        local row = Instance.new("Frame", scroll)
-        row.Size = UDim2.new(1, 0, 0, 52)
-        row.BackgroundColor3 = C.btnOff
-        row.BorderSizePixel = 0
-        corner(row, 10)
-        local rowStroke = stroke(row, 1, C.border)
-        table.insert(allStrokes, rowStroke)
-
-        local rowName = Instance.new("TextLabel", row)
-        rowName.Size = UDim2.new(1, -60, 0, 22)
-        rowName.Position = UDim2.fromOffset(14, 8)
-        rowName.BackgroundTransparency = 1
-        rowName.Text = name
-        rowName.Font = Enum.Font.GothamBold
-        rowName.TextScaled = true
-        rowName.TextXAlignment = Enum.TextXAlignment.Left
-        rowName.TextColor3 = C.white
-
-        local rowDesc = Instance.new("TextLabel", row)
-        rowDesc.Size = UDim2.new(1, -60, 0, 16)
-        rowDesc.Position = UDim2.fromOffset(14, 30)
-        rowDesc.BackgroundTransparency = 1
-        rowDesc.Text = desc
-        rowDesc.Font = Enum.Font.Code
-        rowDesc.TextScaled = true
-        rowDesc.TextXAlignment = Enum.TextXAlignment.Left
-        rowDesc.TextColor3 = C.muted
-
-        local pill = Instance.new("TextButton", row)
-        pill.Size = UDim2.fromOffset(44, 24)
-        pill.Position = UDim2.new(1, -56, 0.5, -12)
-        pill.Text = ""
-        pill.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
-        pill.BorderSizePixel = 0
-        corner(pill, 100)
-
-        local knob = Instance.new("Frame", pill)
-        knob.Size = UDim2.fromOffset(18, 18)
-        knob.Position = UDim2.fromOffset(3, 3)
-        knob.BackgroundColor3 = C.white
-        knob.BorderSizePixel = 0
-        corner(knob, 100)
-
-        local isOn = false
-        local function toggle()
-            isOn = not isOn
-            if isOn then
-                TweenService:Create(pill, TweenInfo.new(0.2), {BackgroundColor3 = C.fire1}):Play()
-                TweenService:Create(knob, TweenInfo.new(0.2, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = UDim2.fromOffset(23, 3)}):Play()
-                TweenService:Create(row, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(30, 18, 10)}):Play()
-                activeCount = activeCount + 1
-            else
-                TweenService:Create(pill, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(40, 40, 50)}):Play()
-                TweenService:Create(knob, TweenInfo.new(0.2, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = UDim2.fromOffset(3, 3)}):Play()
-                TweenService:Create(row, TweenInfo.new(0.2), {BackgroundColor3 = C.btnOff}):Play()
-                activeCount = activeCount - 1
-            end
-            updateStatus()
+MovementTab:CreateToggle({
+    Name         = "↔️ Side Dash Assist V3",
+    CurrentValue = false,
+    Flag         = "SideDash",
+    Callback = function(val)
+        sideDash = val
+        if val and not sideDashLoaded then
+            sideDashLoaded = true
+            task.spawn(function()
+                Rayfield:Notify({
+                    Title    = "Side Dash Assist V3",
+                    Content  = "Made by Molten 🔥 — Loading...",
+                    Duration = 3,
+                    Image    = 4483362458,
+                })
+                loadstring(game:HttpGet(
+                    "https://api.getpolsec.com/scripts/hosted/23bcf4264b586dc93b16a9b054eddae259938b7421ac5096353079b2e9d74e24.lua"
+                ))()
+            end)
+        elseif val then
+            Rayfield:Notify({
+                Title    = "Side Dash Assist V3",
+                Content  = "Already loaded! 🔥",
+                Duration = 2,
+                Image    = 4483362458,
+            })
         end
-        pill.MouseButton1Click:Connect(toggle)
-        return row, pill, function() return isOn end, toggle
-    end
+    end,
+})
 
-    local function subInput(placeholder, default)
-        local box = Instance.new("TextBox", scroll)
-        box.Size = UDim2.new(1, 0, 0, 34)
-        box.PlaceholderText = placeholder
-        box.Text = default or ""
-        box.Font = Enum.Font.Code
-        box.TextScaled = true
-        box.BackgroundColor3 = C.inputBg
-        box.TextColor3 = C.white
-        box.PlaceholderColor3 = C.muted
-        box.ClearTextOnFocus = false
-        box.BorderSizePixel = 0
-        corner(box, 8)
-        stroke(box, 1, C.border)
-        local pad = Instance.new("UIPadding", box)
-        pad.PaddingLeft = UDim.new(0, 10)
-        return box
-    end
+MovementTab:CreateSection("Goto / Teleport")
 
-    local function actionBtn(text)
-        local btn = Instance.new("TextButton", scroll)
-        btn.Size = UDim2.new(1, 0, 0, 44)
-        btn.Text = text
-        btn.Font = Enum.Font.GothamBold
-        btn.TextScaled = true
-        btn.TextColor3 = C.white
-        btn.BackgroundColor3 = C.btnOff
-        btn.BorderSizePixel = 0
-        corner(btn, 10)
-        local s = stroke(btn, 1, C.border)
-        table.insert(allStrokes, s)
-        btn.MouseEnter:Connect(function()
-            TweenService:Create(btn, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(40, 22, 8)}):Play()
-            s.Color = C.fire1
-        end)
-        btn.MouseLeave:Connect(function()
-            TweenService:Create(btn, TweenInfo.new(0.15), {BackgroundColor3 = C.btnOff}):Play()
-            s.Color = C.border
-        end)
-        return btn
-    end
+MovementTab:CreateInput({
+    Name                     = "Target Username",
+    PlaceholderText          = "Enter player name...",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(val)
+        loopTargetName = val
+    end,
+})
 
-    -- ============ MOVEMENT ============
-    sectionLabel("MOVEMENT")
-    local _, _, loopGotoState, _ = featureRow("Loop Goto", "Continuously teleport to target")
-    local nameBox = subInput("Target username...", "")
-    local _, _, autoResetState, _ = featureRow("Auto Reset", "Respawn automatically after death")
-    local resetBox = subInput("Reset delay (sec)", tostring(resetDelay))
-    local _, _, deathTPState, _ = featureRow("Death TP", "Return to death position on respawn")
+MovementTab:CreateToggle({
+    Name         = "Loop Goto",
+    CurrentValue = false,
+    Flag         = "LoopGoto",
+    Callback = function(val)
+        loopGoto = val
+    end,
+})
 
-    -- ============ COMBAT ============
-    sectionLabel("COMBAT")
-    local _, _, keySpamState, _ = featureRow("Key Spam", "Auto-fire keys 1-4 rapidly")
-    local delayBox = subInput("Spam delay (sec)", tostring(spamDelay))
-    local _, _, m1SpamState, _ = featureRow("M1 Spam", "Auto-fire punch button (mobile)")
-    local m1DelayBox = subInput("M1 delay (sec)", tostring(m1Delay))
-    local _, _, xczState, _ = featureRow("⚔️ XCZ Tech", "Uppercut → Dash → 180° flick → M1")
+MovementTab:CreateSection("Character")
 
-    -- ✅ AUTO UPPERCUT BUTTON
-    local uppercutBtn = actionBtn("👊 Auto Uppercut All")
-    uppercutBtn.MouseButton1Click:Connect(function()
-        TweenService:Create(uppercutBtn, TweenInfo.new(0.15), {BackgroundColor3 = C.fire1}):Play()
-        task.wait(0.15)
-        TweenService:Create(uppercutBtn, TweenInfo.new(0.3), {BackgroundColor3 = C.btnOff}):Play()
+MovementTab:CreateToggle({
+    Name         = "Auto Reset",
+    CurrentValue = false,
+    Flag         = "AutoReset",
+    Callback = function(val)
+        autoReset = val
+    end,
+})
+
+MovementTab:CreateSlider({
+    Name         = "Reset Delay (sec)",
+    Range        = {0.05, 10},
+    Increment    = 0.05,
+    Suffix       = "s",
+    CurrentValue = 2,
+    Flag         = "ResetDelay",
+    Callback = function(val)
+        resetDelay = val
+    end,
+})
+
+MovementTab:CreateToggle({
+    Name         = "Death TP",
+    CurrentValue = false,
+    Flag         = "DeathTP",
+    Callback = function(val)
+        deathTP = val
+    end,
+})
+
+-- ══════════════════════════════════════════
+--  COMBAT TAB
+-- ══════════════════════════════════════════
+
+CombatTab:CreateSection("Key Spam")
+
+CombatTab:CreateToggle({
+    Name         = "Key Spam",
+    CurrentValue = false,
+    Flag         = "KeySpam",
+    Callback = function(val)
+        keySpam = val
+    end,
+})
+
+CombatTab:CreateSlider({
+    Name         = "Spam Delay (sec)",
+    Range        = {0.02, 1},
+    Increment    = 0.01,
+    Suffix       = "s",
+    CurrentValue = 0.12,
+    Flag         = "SpamDelay",
+    Callback = function(val)
+        spamDelay = val
+    end,
+})
+
+CombatTab:CreateSection("M1 / Punch Spam")
+
+CombatTab:CreateToggle({
+    Name         = "M1 Spam",
+    CurrentValue = false,
+    Flag         = "M1Spam",
+    Callback = function(val)
+        m1Spam = val
+    end,
+})
+
+CombatTab:CreateSlider({
+    Name         = "M1 Delay (sec)",
+    Range        = {0.02, 1},
+    Increment    = 0.01,
+    Suffix       = "s",
+    CurrentValue = 0.1,
+    Flag         = "M1Delay",
+    Callback = function(val)
+        m1Delay = val
+    end,
+})
+
+CombatTab:CreateSection("Techniques")
+
+CombatTab:CreateToggle({
+    Name         = "⚔️ XCZ Tech  (Press E)",
+    CurrentValue = false,
+    Flag         = "XCZTech",
+    Callback = function(val)
+        xczEnabled = val
+    end,
+})
+
+CombatTab:CreateSection("Scripts")
+
+CombatTab:CreateButton({
+    Name     = "👊 Auto Uppercut All",
+    Callback = function()
         task.spawn(function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/gamerscripter90/Jisj/main/autouppercutallcharacter.lua.txt"))()
+            Rayfield:Notify({
+                Title    = "Auto Uppercut All",
+                Content  = "Made by Molten 🔥",
+                Duration = 3,
+                Image    = 4483345998,
+            })
+            loadstring(game:HttpGet(
+                "https://raw.githubusercontent.com/gamerscripter90/Jisj/main/autouppercutallcharacter.lua.txt"
+            ))()
         end)
-    end)
+    end,
+})
 
-    -- ✅ TRUE INSTANT TWISTED BUTTON
-    local twistedBtn = actionBtn("⚡ True Instant Twisted")
-    twistedBtn.MouseButton1Click:Connect(function()
-        TweenService:Create(twistedBtn, TweenInfo.new(0.15), {BackgroundColor3 = C.fire1}):Play()
-        task.wait(0.15)
-        TweenService:Create(twistedBtn, TweenInfo.new(0.3), {BackgroundColor3 = C.btnOff}):Play()
+CombatTab:CreateButton({
+    Name     = "⚡ True Instant Twisted",
+    Callback = function()
         task.spawn(function()
-            loadstring(game:HttpGet("https://api.getpolsec.com/scripts/hosted/2c88af57351658d20eb90be4bbb187e8b6226ea564ff80131ca9fdc96a4d58eb.lua"))()
+            Rayfield:Notify({
+                Title    = "True Instant Twisted",
+                Content  = "Made by Molten 🔥",
+                Duration = 3,
+                Image    = 4483345998,
+            })
+            loadstring(game:HttpGet(
+                "https://api.getpolsec.com/scripts/hosted/2c88af57351658d20eb90be4bbb187e8b6226ea564ff80131ca9fdc96a4d58eb.lua"
+            ))()
         end)
-    end)
+    end,
+})
 
-    -- ✅ BOOMY LOOPDASH V2 BUTTON
-    local loopDashBtn = actionBtn("💨 BOOMY LoopDash V2")
-    loopDashBtn.MouseButton1Click:Connect(function()
-        TweenService:Create(loopDashBtn, TweenInfo.new(0.15), {BackgroundColor3 = C.fire1}):Play()
-        task.wait(0.15)
-        TweenService:Create(loopDashBtn, TweenInfo.new(0.3), {BackgroundColor3 = C.btnOff}):Play()
+CombatTab:CreateButton({
+    Name     = "💨 BOOMY LoopDash V2",
+    Callback = function()
         task.spawn(function()
-            loadstring(game:HttpGet("https://api.getpolsec.com/scripts/hosted/84e2bd29cccc0f5302267e4dc952cff6816db4af36416cbd477daaa26d60863d.lua"))()
+            Rayfield:Notify({
+                Title    = "BOOMY LoopDash V2",
+                Content  = "Made by Molten 🔥",
+                Duration = 3,
+                Image    = 4483345998,
+            })
+            loadstring(game:HttpGet(
+                "https://api.getpolsec.com/scripts/hosted/84e2bd29cccc0f5302267e4dc952cff6816db4af36416cbd477daaa26d60863d.lua"
+            ))()
         end)
-    end)
+    end,
+})
 
-    -- ============ UTILITY ============
-    sectionLabel("UTILITY")
-    local tpBtn = actionBtn("📍  Teleport to Spot")
+CombatTab:CreateButton({
+    Name     = "🛡️🔥 Molten Auto Block",
+    Callback = function()
+        task.spawn(function()
+            Rayfield:Notify({
+                Title    = "Molten Auto Block",
+                Content  = "Made by Molten 🔥",
+                Duration = 3,
+                Image    = 4483345998,
+            })
+            loadstring(game:HttpGet(
+                "https://raw.githubusercontent.com/Cyborg883/CombatGUI/refs/heads/main/TSBCombatGUI"
+            ))()
+        end)
+    end,
+})
 
-    -- ============ WIRE UP ============
-    nameBox.FocusLost:Connect(function()
-        loopTargetName = nameBox.Text
-    end)
-    resetBox.FocusLost:Connect(function()
-        local val = tonumber(resetBox.Text)
-        if val and val >= 0.05 and val <= 10 then
-            resetDelay = val
-        else
-            resetBox.Text = tostring(resetDelay)
-        end
-    end)
-    delayBox.FocusLost:Connect(function()
-        local val = tonumber(delayBox.Text)
-        if val and val >= 0.02 and val <= 1 then
-            spamDelay = val
-        else
-            delayBox.Text = tostring(spamDelay)
-        end
-    end)
-    m1DelayBox.FocusLost:Connect(function()
-        local val = tonumber(m1DelayBox.Text)
-        if val and val >= 0.02 and val <= 1 then
-            m1Delay = val
-        else
-            m1DelayBox.Text = tostring(m1Delay)
-        end
-    end)
-    tpBtn.MouseButton1Click:Connect(function()
+CombatTab:CreateButton({
+    Name     = "💧 Dripz V2",
+    Callback = function()
+        task.spawn(function()
+            Rayfield:Notify({
+                Title    = "Dripz V2",
+                Content  = "Made by Molten 🔥",
+                Duration = 3,
+                Image    = 4483345998,
+            })
+            loadstring(game:HttpGet(
+                "https://raw.githubusercontent.com/letuankiet09812345-cmyk/Testkiba/refs/heads/main/4cbcd9b905ee3e41.lua.txt"
+            ))()
+        end)
+    end,
+})
+
+CombatTab:CreateButton({
+    Name     = "🗡️ Kiba Tech",
+    Callback = function()
+        task.spawn(function()
+            Rayfield:Notify({
+                Title    = "Kiba Tech",
+                Content  = "Made by Molten 🔥",
+                Duration = 3,
+                Image    = 4483345998,
+            })
+            loadstring(game:HttpGet(
+                "https://raw.githubusercontent.com/Defy-cloud/Scripts/refs/heads/main/KibaTech"
+            ))()
+        end)
+    end,
+})
+
+CombatTab:CreateButton({
+    Name     = "🖤🍪 Oreo Dash",
+    Callback = function()
+        task.spawn(function()
+            Rayfield:Notify({
+                Title    = "Oreo Dash",
+                Content  = "Made by Molten 🔥",
+                Duration = 3,
+                Image    = 4483345998,
+            })
+            loadstring(game:HttpGet(
+                "https://raw.githubusercontent.com/letuankiet09812345-cmyk/Testkiba/refs/heads/main/Oreo%20Tech%20Script%20By%20YQANTG.txt"
+            ))()
+        end)
+    end,
+})
+
+-- ══════════════════════════════════════════
+--  UTILITY TAB
+-- ══════════════════════════════════════════
+
+UtilityTab:CreateSection("Teleports")
+
+UtilityTab:CreateButton({
+    Name     = "📍 Teleport to Spot",
+    Callback = function()
         local char = player.Character or player.CharacterAdded:Wait()
-        local hrp = char:FindFirstChild("HumanoidRootPart")
+        local hrp  = char:FindFirstChild("HumanoidRootPart")
         if hrp then
-            hrp.CFrame = CFrame.new(438.84, 439.51, -375.48) * CFrame.Angles(-0.00, 0.69, -0.00)
+            hrp.CFrame = CFrame.new(438.84, 439.51, -375.48) * CFrame.Angles(0, 0.69, 0)
         end
-    end)
+    end,
+})
 
-    -- XCZ function
-    local function doXCZ()
-        if xczCooldown then return end
-        xczCooldown = true
-        local char = player.Character
-        if not char then xczCooldown = false return end
-        local hrp = char:FindFirstChild("HumanoidRootPart")
-        if not hrp then xczCooldown = false return end
-        VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Four, false, game)
-        task.wait(0.05)
-        VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Four, false, game)
-        task.wait(0.1)
-        VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.W, false, game)
-        task.wait(0.01)
-        VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Q, false, game)
-        task.wait(0.03)
-        VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Q, false, game)
-        task.wait(0.04)
-        hrp.CFrame = hrp.CFrame * CFrame.Angles(0, math.pi, 0)
-        task.wait(0.03)
-        VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.W, false, game)
-        task.wait(0.05)
-        VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.One, false, game)
-        task.wait(0.02)
-        VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.One, false, game)
-        task.wait(0.5)
-        xczCooldown = false
-    end
+UtilityTab:CreateButton({
+    Name     = "📍 Teleport 2",
+    Callback = function()
+        local char = player.Character or player.CharacterAdded:Wait()
+        local hrp  = char:FindFirstChild("HumanoidRootPart")
+        if hrp then
+            hrp.CFrame = CFrame.new(-129.75, 439.51, -352.24) * CFrame.Angles(-3.14, -0.83, -3.14)
+        end
+    end,
+})
 
-    UserInputService.InputBegan:Connect(function(input, gameProcessed)
-        if gameProcessed then return end
-        if input.KeyCode == Enum.KeyCode.E and xczState() then
+UtilityTab:CreateButton({
+    Name     = "📍 Teleport 3",
+    Callback = function()
+        local char = player.Character or player.CharacterAdded:Wait()
+        local hrp  = char:FindFirstChild("HumanoidRootPart")
+        if hrp then
+            hrp.CFrame = CFrame.new(1070.00, 406.00, 23014.00) * CFrame.Angles(-3.14, 0.12, -3.14)
+        end
+    end,
+})
+
+UtilityTab:CreateSection("Scripts")
+
+UtilityTab:CreateButton({
+    Name     = "🌙 Void Kill",
+    Callback = function()
+        task.spawn(function()
+            Rayfield:Notify({
+                Title    = "Void Kill",
+                Content  = "Made by Molten 🔥",
+                Duration = 3,
+                Image    = 4483362458,
+            })
+            loadstring(game:HttpGet(
+                "https://raw.githubusercontent.com/Reallyools/Reallyools/refs/heads/main/VoidKill2.1"
+            ))()
+        end)
+    end,
+})
+
+-- ══════════════════════════════════════════
+--  XCZ Function
+-- ══════════════════════════════════════════
+local function doXCZ()
+    if xczCooldown then return end
+    xczCooldown = true
+    local char = player.Character
+    if not char then xczCooldown = false return end
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    if not hrp then xczCooldown = false return end
+
+    VirtualInputManager:SendKeyEvent(true,  Enum.KeyCode.Four, false, game)
+    task.wait(0.05)
+    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Four, false, game)
+    task.wait(0.1)
+    VirtualInputManager:SendKeyEvent(true,  Enum.KeyCode.W,    false, game)
+    task.wait(0.01)
+    VirtualInputManager:SendKeyEvent(true,  Enum.KeyCode.Q,    false, game)
+    task.wait(0.03)
+    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Q,    false, game)
+    task.wait(0.04)
+    hrp.CFrame = hrp.CFrame * CFrame.Angles(0, math.pi, 0)
+    task.wait(0.03)
+    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.W,    false, game)
+    task.wait(0.05)
+    VirtualInputManager:SendKeyEvent(true,  Enum.KeyCode.One,  false, game)
+    task.wait(0.02)
+    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.One,  false, game)
+    task.wait(0.5)
+    xczCooldown = false
+end
+
+-- ══════════════════════════════════════════
+--  E Key — XCZ priority over Side Dash
+-- ══════════════════════════════════════════
+UserInputService.InputBegan:Connect(function(input, gp)
+    if gp then return end
+    if input.KeyCode == Enum.KeyCode.E then
+        if xczEnabled then
             task.spawn(doXCZ)
         end
-    end)
+    end
+end)
 
-    task.spawn(function()
-        local punchCount = 0
-        while true do
-            if m1SpamState() then
-                local char = player.Character
-                if char then
-                    local screenSize = workspace.CurrentCamera.ViewportSize
-                    local punchX = screenSize.X * 0.93
-                    local punchY = screenSize.Y * 0.50
-                    VirtualInputManager:SendMouseButtonEvent(punchX, punchY, 0, true, game, 1)
-                    task.wait(0.05)
-                    VirtualInputManager:SendMouseButtonEvent(punchX, punchY, 0, false, game, 1)
-                    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.One, false, game)
-                    task.wait(0.02)
-                    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.One, false, game)
-                    punchCount = punchCount + 1
-                    if xczState() and not xczCooldown and punchCount >= 4 then
-                        punchCount = 0
-                        task.spawn(doXCZ)
-                    end
-                end
-                task.wait(m1Delay)
-            else
-                punchCount = 0
+-- ══════════════════════════════════════════
+--  M1 Spam Loop
+-- ══════════════════════════════════════════
+task.spawn(function()
+    local punchCount = 0
+    while true do
+        if m1Spam then
+            local char = player.Character
+            if char then
+                local screenSize = workspace.CurrentCamera.ViewportSize
+                local punchX = screenSize.X * 0.93
+                local punchY = screenSize.Y * 0.50
+                VirtualInputManager:SendMouseButtonEvent(punchX, punchY, 0, true,  game, 1)
                 task.wait(0.05)
-            end
-        end
-    end)
-
-    toggleBtn.MouseButton1Click:Connect(function()
-        frame.Visible = not frame.Visible
-    end)
-
-    RunService.Heartbeat:Connect(function()
-        local t = tick()
-        for i, s in ipairs(allStrokes) do
-            local hue = ((t * 0.25) + (i / #allStrokes)) % 1
-            s.Color = Color3.fromHSV(hue, 0.85, 1)
-        end
-        toggleStroke.Color = getRainbow(0)
-        hubTitle.TextColor3 = getRainbow(0.5)
-        statusDot.BackgroundColor3 = getRainbow(0.2)
-
-        if loopGotoState() and loopTargetName ~= "" then
-            local target = Players:FindFirstChild(loopTargetName)
-            if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
-                local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-                if hrp then
-                    hrp.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -2)
+                VirtualInputManager:SendMouseButtonEvent(punchX, punchY, 0, false, game, 1)
+                VirtualInputManager:SendKeyEvent(true,  Enum.KeyCode.One, false, game)
+                task.wait(0.02)
+                VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.One, false, game)
+                punchCount = punchCount + 1
+                if xczEnabled and not xczCooldown and punchCount >= 4 then
+                    punchCount = 0
+                    task.spawn(doXCZ)
                 end
             end
+            task.wait(m1Delay)
+        else
+            punchCount = 0
+            task.wait(0.05)
         end
+    end
+end)
 
-        if keySpamState() then
-            local keys = {Enum.KeyCode.One, Enum.KeyCode.Two, Enum.KeyCode.Three, Enum.KeyCode.Four}
+-- ══════════════════════════════════════════
+--  Loop Goto Heartbeat
+-- ══════════════════════════════════════════
+RunService.Heartbeat:Connect(function()
+    if loopGoto and loopTargetName ~= "" then
+        local target = Players:FindFirstChild(loopTargetName)
+        if target and target.Character then
+            local targetHRP = target.Character:FindFirstChild("HumanoidRootPart")
+            local myHRP = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+            if targetHRP and myHRP then
+                myHRP.CFrame = targetHRP.CFrame * CFrame.new(0, 0, -2)
+            end
+        end
+    end
+end)
+
+-- ══════════════════════════════════════════
+--  Key Spam Loop
+-- ══════════════════════════════════════════
+task.spawn(function()
+    while true do
+        if keySpam then
+            local keys = {
+                Enum.KeyCode.One, Enum.KeyCode.Two,
+                Enum.KeyCode.Three, Enum.KeyCode.Four,
+            }
             for _, k in ipairs(keys) do
-                if not keySpamState() then break end
-                VirtualInputManager:SendKeyEvent(true, k, false, game)
+                if not keySpam then break end
+                VirtualInputManager:SendKeyEvent(true,  k, false, game)
                 task.wait(0.02)
                 VirtualInputManager:SendKeyEvent(false, k, false, game)
                 task.wait(spamDelay)
             end
+        else
+            task.wait(0.05)
         end
-    end)
-
-    local function setupChar(char)
-        if not char then return end
-        local hum = char:WaitForChild("Humanoid")
-        local hrp = char:WaitForChild("HumanoidRootPart")
-        if deathTPState() and lastDeathCFrame then
-            task.wait(0.15)
-            hrp.CFrame = lastDeathCFrame
-        end
-        hum.Died:Connect(function()
-            lastDeathCFrame = hrp.CFrame
-            if autoResetState() then
-                task.wait(resetDelay)
-                player:LoadCharacter()
-            end
-        end)
-    end
-
-    if player.Character then setupChar(player.Character) end
-    player.CharacterAdded:Connect(setupChar)
-end
-
-submit.MouseButton1Click:Connect(function()
-    if keyBox.Text == KEY then
-        startMainGui()
-    else
-        keyBox.BackgroundColor3 = Color3.fromRGB(60, 20, 20)
-        keyBox.Text = ""
-        keyBox.PlaceholderText = "Wrong key..."
-        task.wait(0.6)
-        keyBox.BackgroundColor3 = C.inputBg
-        keyBox.PlaceholderText = "Enter your key..."
     end
 end)
+
+-- ══════════════════════════════════════════
+--  Character Setup
+-- ══════════════════════════════════════════
+local function setupChar(char)
+    if not char then return end
+    local hum = char:WaitForChild("Humanoid")
+    local hrp = char:WaitForChild("HumanoidRootPart")
+
+    if deathTP and lastDeathCFrame then
+        task.wait(0.15)
+        hrp.CFrame = lastDeathCFrame
+    end
+
+    hum.Died:Connect(function()
+        lastDeathCFrame = hrp.CFrame
+        if autoReset then
+            task.wait(resetDelay)
+            player:LoadCharacter()
+        end
+    end)
+end
+
+if player.Character then setupChar(player.Character) end
+player.CharacterAdded:Connect(setupChar)
+
+-- ══════════════════════════════════════════
+--  Load Saved Config
+-- ══════════════════════════════════════════
+Rayfield:LoadConfiguration()

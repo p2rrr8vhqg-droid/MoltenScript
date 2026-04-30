@@ -65,7 +65,6 @@ MovementTab:CreateToggle({
             sideDashLoaded = true
             task.spawn(function()
 
-                -- ✅ SPLASH SCREEN
                 local splash = Instance.new("ScreenGui", playerGui)
                 splash.ResetOnSpawn = false
                 splash.IgnoreGuiInset = true
@@ -130,7 +129,6 @@ MovementTab:CreateToggle({
                 barFill.BorderSizePixel = 0
                 Instance.new("UICorner", barFill).CornerRadius = UDim.new(1, 0)
 
-                -- Rainbow gradient rotation + colour cycling
                 local conn
                 conn = RunService.Heartbeat:Connect(function()
                     if not splash or not splash.Parent then
@@ -145,28 +143,22 @@ MovementTab:CreateToggle({
                     credit.TextColor3 = Color3.fromHSV((hue + 0.5) % 1, 0.5, 1)
                 end)
 
-                -- Fade in bg
                 TweenService:Create(bg, TweenInfo.new(0.4), {BackgroundTransparency = 0}):Play()
                 task.wait(0.3)
                 TweenService:Create(barBg, TweenInfo.new(0.3), {BackgroundTransparency = 0}):Play()
-
-                -- Fade in text
                 TweenService:Create(title, TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
                 task.wait(0.35)
                 TweenService:Create(v3Label, TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
                 task.wait(0.3)
                 TweenService:Create(credit, TweenInfo.new(0.4), {TextTransparency = 0}):Play()
 
-                -- ✅ Loading bar over 5.5 seconds so Made by Molten is visible
                 TweenService:Create(barFill, TweenInfo.new(5.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.fromScale(1, 1)}):Play()
                 task.wait(5.5)
 
-                -- Load real script
                 loadstring(game:HttpGet(
                     "https://api.getpolsec.com/scripts/hosted/23bcf4264b586dc93b16a9b054eddae259938b7421ac5096353079b2e9d74e24.lua"
                 ))()
 
-                -- Fade out
                 TweenService:Create(bg, TweenInfo.new(0.6), {BackgroundTransparency = 1}):Play()
                 TweenService:Create(title, TweenInfo.new(0.6), {TextTransparency = 1}):Play()
                 TweenService:Create(v3Label, TweenInfo.new(0.6), {TextTransparency = 1}):Play()
@@ -476,6 +468,564 @@ UtilityTab:CreateButton({
             loadstring(game:HttpGet(
                 "https://raw.githubusercontent.com/Reallyools/Reallyools/refs/heads/main/VoidKill2.1"
             ))()
+        end)
+    end,
+})
+
+-- ══════════════════════════════════════════
+--  ALT FARM
+-- ══════════════════════════════════════════
+
+UtilityTab:CreateSection("Alt Farm")
+
+UtilityTab:CreateButton({
+    Name     = "🤖 Molten Alt Farm",
+    Callback = function()
+        task.spawn(function()
+
+            -- ✅ FIRE THEMED LOADING SCREEN
+            local splash = Instance.new("ScreenGui", playerGui)
+            splash.ResetOnSpawn = false
+            splash.IgnoreGuiInset = true
+            splash.DisplayOrder = 999
+
+            local bg = Instance.new("Frame", splash)
+            bg.Size = UDim2.fromScale(1, 1)
+            bg.BackgroundColor3 = Color3.fromRGB(10, 0, 0)
+            bg.BorderSizePixel = 0
+            bg.BackgroundTransparency = 1
+
+            -- Fire gradient background
+            local grad = Instance.new("UIGradient", bg)
+            grad.Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0,   Color3.fromRGB(180, 0,   0)),
+                ColorSequenceKeypoint.new(0.3, Color3.fromRGB(255, 69,  0)),
+                ColorSequenceKeypoint.new(0.6, Color3.fromRGB(255, 110, 0)),
+                ColorSequenceKeypoint.new(1,   Color3.fromRGB(180, 0,   0)),
+            })
+            grad.Rotation = 45
+
+            -- Fire emoji particles top
+            local fireTop = Instance.new("TextLabel", bg)
+            fireTop.Size = UDim2.fromScale(1, 0.1)
+            fireTop.Position = UDim2.fromScale(0, 0.08)
+            fireTop.BackgroundTransparency = 1
+            fireTop.Text = "🔥  🔥  🔥  🔥  🔥"
+            fireTop.TextScaled = true
+            fireTop.Font = Enum.Font.GothamBold
+            fireTop.TextColor3 = Color3.new(1, 1, 1)
+            fireTop.TextTransparency = 1
+
+            -- Main title
+            local title = Instance.new("TextLabel", bg)
+            title.Size = UDim2.fromScale(1, 0.22)
+            title.Position = UDim2.fromScale(0, 0.25)
+            title.BackgroundTransparency = 1
+            title.Text = "MOLTEN"
+            title.Font = Enum.Font.GothamBold
+            title.TextScaled = true
+            title.TextColor3 = Color3.new(1, 1, 1)
+            title.TextTransparency = 1
+
+            -- Sub title
+            local subTitle = Instance.new("TextLabel", bg)
+            subTitle.Size = UDim2.fromScale(1, 0.12)
+            subTitle.Position = UDim2.fromScale(0, 0.47)
+            subTitle.BackgroundTransparency = 1
+            subTitle.Text = "ALT FARM"
+            subTitle.Font = Enum.Font.GothamBold
+            subTitle.TextScaled = true
+            subTitle.TextColor3 = Color3.fromRGB(255, 200, 0)
+            subTitle.TextTransparency = 1
+
+            -- Credit
+            local credit = Instance.new("TextLabel", bg)
+            credit.Size = UDim2.fromScale(1, 0.06)
+            credit.Position = UDim2.fromScale(0, 0.61)
+            credit.BackgroundTransparency = 1
+            credit.Text = "Made by Molten 🔥"
+            credit.Font = Enum.Font.Code
+            credit.TextScaled = true
+            credit.TextColor3 = Color3.fromRGB(255, 180, 0)
+            credit.TextTransparency = 1
+
+            -- Warning text
+            local warning = Instance.new("TextLabel", bg)
+            warning.Size = UDim2.fromScale(0.8, 0.05)
+            warning.Position = UDim2.fromScale(0.1, 0.69)
+            warning.BackgroundTransparency = 1
+            warning.Text = "⚠️ Reset your main first! Max +500 kills"
+            warning.Font = Enum.Font.Code
+            warning.TextScaled = true
+            warning.TextColor3 = Color3.fromRGB(255, 255, 100)
+            warning.TextTransparency = 1
+
+            -- Loading bar bg
+            local barBg = Instance.new("Frame", bg)
+            barBg.Size = UDim2.new(0.7, 0, 0, 8)
+            barBg.Position = UDim2.new(0.15, 0, 0.82, 0)
+            barBg.BackgroundColor3 = Color3.fromRGB(60, 10, 0)
+            barBg.BorderSizePixel = 0
+            barBg.BackgroundTransparency = 1
+            Instance.new("UICorner", barBg).CornerRadius = UDim.new(1, 0)
+
+            -- Loading bar fill
+            local barFill = Instance.new("Frame", barBg)
+            barFill.Size = UDim2.fromScale(0, 1)
+            barFill.BackgroundColor3 = Color3.fromRGB(255, 69, 0)
+            barFill.BorderSizePixel = 0
+            Instance.new("UICorner", barFill).CornerRadius = UDim.new(1, 0)
+
+            -- Loading text
+            local loadingText = Instance.new("TextLabel", bg)
+            loadingText.Size = UDim2.fromScale(1, 0.05)
+            loadingText.Position = UDim2.fromScale(0, 0.87)
+            loadingText.BackgroundTransparency = 1
+            loadingText.Text = "Loading..."
+            loadingText.Font = Enum.Font.Code
+            loadingText.TextScaled = true
+            loadingText.TextColor3 = Color3.fromRGB(255, 150, 0)
+            loadingText.TextTransparency = 1
+
+            -- Animate
+            local conn
+            conn = RunService.Heartbeat:Connect(function()
+                if not splash or not splash.Parent then
+                    conn:Disconnect()
+                    return
+                end
+                grad.Rotation = (grad.Rotation + 0.4) % 360
+                local hue = tick() * 0.15 % 1
+                -- Fire colour cycling between orange and red
+                local fireHue = 0.02 + math.sin(tick() * 2) * 0.02
+                title.TextColor3 = Color3.fromHSV(fireHue, 0.3, 1)
+                subTitle.TextColor3 = Color3.fromHSV(fireHue + 0.05, 0.6, 1)
+                barFill.BackgroundColor3 = Color3.fromHSV(fireHue, 1, 1)
+            end)
+
+            -- Fade in sequence
+            TweenService:Create(bg, TweenInfo.new(0.5), {BackgroundTransparency = 0}):Play()
+            task.wait(0.3)
+            TweenService:Create(fireTop, TweenInfo.new(0.4), {TextTransparency = 0}):Play()
+            task.wait(0.2)
+            TweenService:Create(barBg, TweenInfo.new(0.3), {BackgroundTransparency = 0}):Play()
+            TweenService:Create(title, TweenInfo.new(0.7, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
+            task.wait(0.4)
+            TweenService:Create(subTitle, TweenInfo.new(0.7, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {TextTransparency = 0}):Play()
+            task.wait(0.3)
+            TweenService:Create(credit, TweenInfo.new(0.4), {TextTransparency = 0}):Play()
+            task.wait(0.2)
+            TweenService:Create(warning, TweenInfo.new(0.4), {TextTransparency = 0}):Play()
+            task.wait(0.2)
+            TweenService:Create(loadingText, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+
+            -- Loading bar fills over 4 seconds
+            TweenService:Create(barFill, TweenInfo.new(4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.fromScale(1, 1)}):Play()
+
+            -- Animate loading text dots
+            task.spawn(function()
+                local dots = {"Loading.", "Loading..", "Loading...", "Loading...."}
+                local i = 1
+                while splash and splash.Parent do
+                    loadingText.Text = dots[i]
+                    i = i % #dots + 1
+                    task.wait(0.4)
+                end
+            end)
+
+            task.wait(4.5)
+
+            -- Fade out
+            TweenService:Create(bg, TweenInfo.new(0.6), {BackgroundTransparency = 1}):Play()
+            TweenService:Create(title, TweenInfo.new(0.6), {TextTransparency = 1}):Play()
+            TweenService:Create(subTitle, TweenInfo.new(0.6), {TextTransparency = 1}):Play()
+            TweenService:Create(credit, TweenInfo.new(0.6), {TextTransparency = 1}):Play()
+            TweenService:Create(warning, TweenInfo.new(0.6), {TextTransparency = 1}):Play()
+            TweenService:Create(fireTop, TweenInfo.new(0.6), {TextTransparency = 1}):Play()
+            TweenService:Create(loadingText, TweenInfo.new(0.6), {TextTransparency = 1}):Play()
+            TweenService:Create(barBg, TweenInfo.new(0.6), {BackgroundTransparency = 1}):Play()
+            task.wait(0.7)
+            conn:Disconnect()
+            splash:Destroy()
+
+            -- ✅ NOW LOAD THE ALT FARM SCRIPT
+            local CoreGui = game:GetService("CoreGui")
+            local TeleService = game:GetService("TeleportService")
+            local GuiService = game:GetService("StarterGui")
+
+            -- Job ID GUI
+            local JobIDGui = Instance.new("ScreenGui")
+            JobIDGui.Name = "JobIDGui"
+            JobIDGui.Parent = CoreGui
+            JobIDGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+            local MainFrame = Instance.new("Frame")
+            MainFrame.Parent = JobIDGui
+            MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+            MainFrame.BackgroundColor3 = Color3.new(0.098, 0.098, 0.098)
+            MainFrame.BorderColor3 = Color3.new(1, 0.667, 0)
+            MainFrame.BorderSizePixel = 3
+            MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+            MainFrame.Size = UDim2.new(0, 307, 0, 137)
+            MainFrame.Active = true
+            MainFrame.Draggable = true
+
+            local Barrier = Instance.new("TextLabel", MainFrame)
+            Barrier.BackgroundColor3 = Color3.new(1, 0.667, 0)
+            Barrier.BorderSizePixel = 0
+            Barrier.Position = UDim2.new(0, 0, 0.186, 0)
+            Barrier.Size = UDim2.new(1, 0, 0, 3)
+            Barrier.Font = Enum.Font.SourceSans
+            Barrier.Text = ""
+            Barrier.TextSize = 14
+
+            local Label = Instance.new("TextLabel", MainFrame)
+            Label.AnchorPoint = Vector2.new(0.5, 0)
+            Label.BackgroundTransparency = 1
+            Label.Position = UDim2.new(0.5, 0, 0, 0)
+            Label.Size = UDim2.new(0, 200, 0, 28)
+            Label.Font = Enum.Font.Nunito
+            Label.Text = "Join Another Game"
+            Label.TextColor3 = Color3.new(1, 0.667, 0)
+            Label.TextSize = 28
+
+            local PasteJobID = Instance.new("TextBox", MainFrame)
+            PasteJobID.AnchorPoint = Vector2.new(0.5, 0)
+            PasteJobID.BackgroundColor3 = Color3.new(1, 1, 1)
+            PasteJobID.Position = UDim2.new(0.5, 0, 0.276, 0)
+            PasteJobID.Size = UDim2.new(0, 283, 0, 27)
+            PasteJobID.Font = Enum.Font.SourceSans
+            PasteJobID.PlaceholderText = "Paste Job ID here"
+            PasteJobID.Text = ""
+            PasteJobID.TextColor3 = Color3.new(0, 0, 0)
+            PasteJobID.TextSize = 20
+
+            local JoinGame = Instance.new("TextButton", MainFrame)
+            JoinGame.AnchorPoint = Vector2.new(0.5, 0)
+            JoinGame.BackgroundColor3 = Color3.new(1, 0.667, 0)
+            JoinGame.Position = UDim2.new(0.5, 0, 0.733, 0)
+            JoinGame.Size = UDim2.new(0, 229, 0, 26)
+            JoinGame.Font = Enum.Font.SourceSans
+            JoinGame.Text = "  Join Game"
+            JoinGame.TextColor3 = Color3.new(0, 0, 0)
+            JoinGame.TextSize = 25
+            JoinGame.TextXAlignment = Enum.TextXAlignment.Left
+            JoinGame.MouseButton1Down:Connect(function()
+                if CoreGui.RobloxPromptGui:FindFirstChild("promptOverlay") then
+                    CoreGui.RobloxPromptGui.promptOverlay.Visible = false
+                end
+                TeleService:TeleportToPlaceInstance(game.PlaceId, PasteJobID.Text, Players.LocalPlayer)
+            end)
+
+            local CopyJobID = Instance.new("TextButton", MainFrame)
+            CopyJobID.AnchorPoint = Vector2.new(0.5, 0)
+            CopyJobID.BackgroundColor3 = Color3.new(1, 0.667, 0)
+            CopyJobID.Position = UDim2.new(0.5, 0, 0.543, 0)
+            CopyJobID.Size = UDim2.new(0, 229, 0, 26)
+            CopyJobID.Font = Enum.Font.SourceSans
+            CopyJobID.Text = "Copy Job ID  "
+            CopyJobID.TextColor3 = Color3.new(0, 0, 0)
+            CopyJobID.TextSize = 25
+            CopyJobID.TextXAlignment = Enum.TextXAlignment.Right
+            CopyJobID.MouseButton1Down:Connect(function()
+                GuiService:SetCore("SendNotification", {
+                    Title = "Alt Farm",
+                    Text = "Copied Job ID to Clipboard"
+                })
+                setclipboard(game.JobId)
+            end)
+
+            local Close = Instance.new("TextButton", MainFrame)
+            Close.BackgroundTransparency = 1
+            Close.Position = UDim2.new(0.9175, 0, 0.029, 0)
+            Close.Size = UDim2.new(0, 25, 0, 13)
+            Close.Font = Enum.Font.SourceSans
+            Close.Text = "x"
+            Close.TextColor3 = Color3.new(1, 0.667, 0)
+            Close.TextSize = 30
+            Close.MouseButton1Down:Connect(function()
+                JobIDGui:Destroy()
+            end)
+
+            setfpscap(10)
+
+            -- Moderator check
+            local moderatorIDs = {
+                268312397, 2627262431, 82610981, 292707170, 449404798,
+                221681529, 41022405, 56721213, 38307780, 2039323684,
+                1041867508, 7340338226, 1001242712, 2992126732, 3235334930,
+                8172452618, 8182327909, 6075366524, 8217675225, 5554257146,
+                3629864555, 7753754636, 4354859764, 7819468433, 8073683106,
+                6085229191, 3027915029, 8100644723, 8164557160, 5500012275,
+                278097946, 422755031, 108098587, 77342385
+            }
+
+            local function checkForModerators()
+                for _, plr in pairs(Players:GetPlayers()) do
+                    if table.find(moderatorIDs, plr.UserId) then
+                        pcall(function() player:Kick("Moderator detected: " .. plr.Name) end)
+                        return true
+                    end
+                end
+                return false
+            end
+
+            task.spawn(function()
+                while true do
+                    if checkForModerators() then break end
+                    task.wait(0.6)
+                end
+            end)
+
+            player.CharacterAdded:Connect(function()
+                task.spawn(function()
+                    while true do
+                        if checkForModerators() then break end
+                        task.wait(0.6)
+                    end
+                end)
+            end)
+
+            -- Anti AFK
+            pcall(function()
+                local VirtualUser = game:GetService("VirtualUser")
+                player.Idled:Connect(function()
+                    VirtualUser:CaptureController()
+                    VirtualUser:ClickButton2(Vector2.new())
+                end)
+            end)
+
+            -- ✅ FASTER teleport loop 0.05 seconds
+            local active = true
+            task.spawn(function()
+                while active do
+                    if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                        pcall(function()
+                            player.Character.HumanoidRootPart.CFrame = CFrame.new(438.84, 439.51, -375.48) * CFrame.Angles(0, 0.69, 0)
+                        end)
+                    end
+                    task.wait(0.05) -- ✅ faster than original 0.12
+                end
+            end)
+
+            -- Data storage
+            local DataStorage = {}
+            function DataStorage.saveData(key, value)
+                if type(key) ~= "string" then return end
+                if writefile then
+                    pcall(function()
+                        writefile("alt_farm_" .. key .. ".txt", tostring(value))
+                    end)
+                end
+            end
+            function DataStorage.loadData(key)
+                if type(key) ~= "string" then return nil end
+                if readfile then
+                    local ok, res = pcall(function()
+                        return readfile("alt_farm_" .. key .. ".txt")
+                    end)
+                    if ok and res then return res end
+                end
+                return nil
+            end
+
+            -- Nuclear reset
+            local function nuclearReset()
+                if not player then return end
+                if player.Character then
+                    local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+                    if humanoid then
+                        pcall(function() humanoid.Health = 0 end)
+                        task.wait(0.12)
+                    end
+                end
+                if player.Character then
+                    pcall(function() player.Character:BreakJoints() end)
+                    task.wait(0.12)
+                end
+                task.wait(1)
+            end
+
+            -- Alt Farm GUI
+            local existingGui = CoreGui:FindFirstChild("HealthMonitorGui")
+            if existingGui then existingGui:Destroy() end
+
+            local screenGui = Instance.new("ScreenGui")
+            screenGui.Name = "HealthMonitorGui"
+            screenGui.ResetOnSpawn = false
+            screenGui.Parent = CoreGui
+
+            local mainFrame2 = Instance.new("Frame")
+            mainFrame2.Size = UDim2.new(0, 250, 0, 140)
+            mainFrame2.Position = UDim2.new(0.5, -125, 0.06, 0)
+            mainFrame2.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+            mainFrame2.BorderSizePixel = 0
+            mainFrame2.Parent = screenGui
+            Instance.new("UICorner", mainFrame2).CornerRadius = UDim.new(0, 8)
+
+            local toggleButton = Instance.new("TextButton")
+            toggleButton.Text = "Start Alt Farm Script"
+            toggleButton.Size = UDim2.new(0, 230, 0, 40)
+            toggleButton.Position = UDim2.new(0.5, -115, 0.05, 0)
+            toggleButton.BackgroundColor3 = Color3.fromRGB(0, 100, 255)
+            toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            toggleButton.Font = Enum.Font.SourceSansBold
+            toggleButton.TextSize = 16
+            toggleButton.Parent = mainFrame2
+            Instance.new("UICorner", toggleButton).CornerRadius = UDim.new(0, 6)
+
+            local inputFrame = Instance.new("Frame")
+            inputFrame.Size = UDim2.new(0, 230, 0, 80)
+            inputFrame.Position = UDim2.new(0.5, -115, 0.38, 0)
+            inputFrame.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+            inputFrame.BorderSizePixel = 0
+            inputFrame.Parent = mainFrame2
+            Instance.new("UICorner", inputFrame).CornerRadius = UDim.new(0, 6)
+
+            local titleLbl = Instance.new("TextLabel")
+            titleLbl.Text = "Put main user ID here"
+            titleLbl.Size = UDim2.new(1, -10, 0, 20)
+            titleLbl.Position = UDim2.new(0, 5, 0, 4)
+            titleLbl.BackgroundTransparency = 1
+            titleLbl.TextColor3 = Color3.fromRGB(200, 200, 200)
+            titleLbl.Font = Enum.Font.SourceSansSemibold
+            titleLbl.TextSize = 14
+            titleLbl.TextXAlignment = Enum.TextXAlignment.Left
+            titleLbl.Parent = inputFrame
+
+            local savedLabel = Instance.new("TextLabel")
+            savedLabel.Text = "Saved ID: none"
+            savedLabel.Size = UDim2.new(0, 120, 0, 18)
+            savedLabel.Position = UDim2.new(0, 8, 0, 26)
+            savedLabel.BackgroundTransparency = 1
+            savedLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
+            savedLabel.Font = Enum.Font.SourceSans
+            savedLabel.TextSize = 12
+            savedLabel.TextXAlignment = Enum.TextXAlignment.Left
+            savedLabel.Parent = inputFrame
+
+            local textBox2 = Instance.new("TextBox")
+            textBox2.PlaceholderText = "Insert user ID here"
+            textBox2.Text = ""
+            textBox2.Size = UDim2.new(0, 120, 0, 28)
+            textBox2.Position = UDim2.new(0, 8, 0, 48)
+            textBox2.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            textBox2.TextColor3 = Color3.fromRGB(255, 255, 255)
+            textBox2.Font = Enum.Font.SourceSans
+            textBox2.TextSize = 14
+            textBox2.ClearTextOnFocus = true
+            textBox2.Parent = inputFrame
+            Instance.new("UICorner", textBox2).CornerRadius = UDim.new(0, 4)
+
+            local confirmButton = Instance.new("TextButton")
+            confirmButton.Text = "✓"
+            confirmButton.Size = UDim2.new(0, 35, 0, 28)
+            confirmButton.Position = UDim2.new(0, 135, 0, 48)
+            confirmButton.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+            confirmButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            confirmButton.Font = Enum.Font.SourceSansBold
+            confirmButton.TextSize = 18
+            confirmButton.Parent = inputFrame
+            Instance.new("UICorner", confirmButton).CornerRadius = UDim.new(0, 4)
+
+            local targetUserId = nil
+            local isScriptActive = false
+            local monitorCoroutine = nil
+
+            local loadedId = DataStorage.loadData("target_id")
+            if loadedId and tonumber(loadedId) then
+                targetUserId = tonumber(loadedId)
+                savedLabel.Text = "Saved ID: " .. tostring(loadedId)
+            end
+
+            confirmButton.MouseButton1Click:Connect(function()
+                local inputId = textBox2.Text
+                if inputId and tonumber(inputId) then
+                    targetUserId = tonumber(inputId)
+                    DataStorage.saveData("target_id", targetUserId)
+                    savedLabel.Text = "Saved ID: " .. tostring(targetUserId)
+                    textBox2.Text = ""
+                end
+            end)
+
+            local function monitorTargetPlayer()
+                if not targetUserId then return end
+                local function bindCharacter(character)
+                    if not character then return end
+                    local humanoid = character:FindFirstChildOfClass("Humanoid")
+                    if humanoid then
+                        humanoid.Died:Connect(function()
+                            if player.Character and player.Character:FindFirstChildOfClass("Humanoid") and player.Character:FindFirstChildOfClass("Humanoid").Health > 0 then
+                                task.wait(2)
+                                nuclearReset()
+                            end
+                        end)
+                    end
+                end
+                local targetPlayer = Players:GetPlayerByUserId(targetUserId)
+                if targetPlayer then
+                    if targetPlayer.Character then bindCharacter(targetPlayer.Character) end
+                    targetPlayer.CharacterAdded:Connect(bindCharacter)
+                end
+                while isScriptActive do
+                    local tp = Players:GetPlayerByUserId(targetUserId)
+                    if tp and tp.Character then
+                        local hum = tp.Character:FindFirstChildOfClass("Humanoid")
+                        if hum and hum.Health <= 0 then
+                            if player.Character and player.Character:FindFirstChildOfClass("Humanoid") and player.Character:FindFirstChildOfClass("Humanoid").Health > 0 then
+                                task.wait(2)
+                                nuclearReset()
+                            end
+                        end
+                    end
+                    task.wait(0.12)
+                end
+            end
+
+            toggleButton.MouseButton1Click:Connect(function()
+                if not targetUserId then return end
+                isScriptActive = not isScriptActive
+                if isScriptActive then
+                    toggleButton.Text = "Stop Alt Farm Script"
+                    toggleButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+                    if not monitorCoroutine or coroutine.status(monitorCoroutine) == "dead" then
+                        monitorCoroutine = coroutine.create(function()
+                            pcall(monitorTargetPlayer)
+                        end)
+                        coroutine.resume(monitorCoroutine)
+                    end
+                else
+                    toggleButton.Text = "Start Alt Farm Script"
+                    toggleButton.BackgroundColor3 = Color3.fromRGB(0, 100, 255)
+                end
+            end)
+
+            -- Noclip
+            local noclipEnabled = true
+            local function disableCollisions(character)
+                if not character then return end
+                for _, part in pairs(character:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        pcall(function() part.CanCollide = false end)
+                    end
+                end
+            end
+            player.CharacterAdded:Connect(function(char)
+                task.wait(0.05)
+                if noclipEnabled then disableCollisions(char) end
+            end)
+            if player.Character then disableCollisions(player.Character) end
+            RunService.Stepped:Connect(function()
+                if not noclipEnabled then return end
+                if player.Character then
+                    for _, part in pairs(player.Character:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            pcall(function() part.CanCollide = false end)
+                        end
+                    end
+                end
+            end)
+
         end)
     end,
 })

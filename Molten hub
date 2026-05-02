@@ -48,7 +48,11 @@ local Window = Rayfield:CreateWindow({
 
 local MovementTab = Window:CreateTab("Movement", 4483362458)
 local CombatTab   = Window:CreateTab("Combat",   4483345998)
-local UtilityTab  = Window:CreateTab("
+local UtilityTab  = Window:CreateTab("Utility",  4483362458)
+
+-- ══════════════════════════════════════════
+--  LOADING SCREEN HELPER
+-- ══════════════════════════════════════════
 local function showLoadingScreen(titleText, subTitleText, duration)
     local splash = Instance.new("ScreenGui", playerGui)
     splash.ResetOnSpawn = false
@@ -158,7 +162,6 @@ local function showLoadingScreen(titleText, subTitleText, duration)
     end)
 
     task.wait(duration + 0.3)
-
     TweenService:Create(bg, TweenInfo.new(0.6), {BackgroundTransparency = 1}):Play()
     TweenService:Create(title, TweenInfo.new(0.6), {TextTransparency = 1}):Play()
     TweenService:Create(subTitle, TweenInfo.new(0.6), {TextTransparency = 1}):Play()
@@ -285,7 +288,7 @@ MovementTab:CreateToggle({
                 splash:Destroy()
             end)
         elseif val then
-            Rayfield:Notify({ Title="Molten Dash", Content="Already loaded! 🔥", Duration=2, Image=4483362458 })
+            Rayfield:Notify({ Title="Molten Dash", Content="Already loaded!", Duration=2, Image=4483362458 })
         end
     end,
 })
@@ -341,63 +344,63 @@ CombatTab:CreateSection("Scripts")
 
 CombatTab:CreateButton({ Name="Auto Uppercut All", Callback=function()
     task.spawn(function()
-        Rayfield:Notify({ Title="Auto Uppercut All", Content="Made by Molten 🔥", Duration=3, Image=4483345998 })
+        Rayfield:Notify({ Title="Auto Uppercut All", Content="Loading...", Duration=2, Image=4483345998 })
         loadstring(game:HttpGet("https://raw.githubusercontent.com/gamerscripter90/Jisj/main/autouppercutallcharacter.lua.txt"))()
     end)
 end })
 
 CombatTab:CreateButton({ Name="True Instant Twisted", Callback=function()
     task.spawn(function()
-        Rayfield:Notify({ Title="True Instant Twisted", Content="Made by Molten 🔥", Duration=3, Image=4483345998 })
+        Rayfield:Notify({ Title="True Instant Twisted", Content="Loading...", Duration=2, Image=4483345998 })
         loadstring(game:HttpGet("https://api.getpolsec.com/scripts/hosted/2c88af57351658d20eb90be4bbb187e8b6226ea564ff80131ca9fdc96a4d58eb.lua"))()
     end)
 end })
 
-CombatTab:CreateButton({ Name="MrebeBOOMY LoopDash V2", Callback=function()
+CombatTab:CreateButton({ Name="BOOMY LoopDash V2", Callback=function()
     task.spawn(function()
-        Rayfield:Notify({ Title="BOOMY LoopDash V2", Content="Made by Molten 🔥", Duration=3, Image=4483345998 })
+        Rayfield:Notify({ Title="BOOMY LoopDash V2", Content="Loading...", Duration=2, Image=4483345998 })
         loadstring(game:HttpGet("https://api.getpolsec.com/scripts/hosted/84e2bd29cccc0f5302267e4dc952cff6816db4af36416cbd477daaa26d60863d.lua"))()
     end)
 end })
 
-CombatTab:CreateButton({ Name=" Molten Auto Block", Callback=function()
+CombatTab:CreateButton({ Name="Molten Auto Block", Callback=function()
     task.spawn(function()
-        Rayfield:Notify({ Title="Molten Auto Block", Content="Made by Molten 🔥", Duration=3, Image=4483345998 })
+        Rayfield:Notify({ Title="Molten Auto Block", Content="Loading...", Duration=2, Image=4483345998 })
         loadstring(game:HttpGet("https://raw.githubusercontent.com/Cyborg883/CombatGUI/refs/heads/main/TSBCombatGUI"))()
     end)
 end })
 
-CombatTab:CreateButton({ Name="Dripz V2", Callback=function()
+CombatTab:CreateButton({ Name=" Dripz V2", Callback=function()
     task.spawn(function()
-        Rayfield:Notify({ Title="Dripz V2", Content="Made by Molten 🔥", Duration=3, Image=4483345998 })
+        Rayfield:Notify({ Title="Dripz V2", Content="Loading...", Duration=2, Image=4483345998 })
         loadstring(game:HttpGet("https://raw.githubusercontent.com/letuankiet09812345-cmyk/Testkiba/refs/heads/main/4cbcd9b905ee3e41.lua.txt"))()
     end)
 end })
 
 CombatTab:CreateButton({ Name="Kiba Tech", Callback=function()
     task.spawn(function()
-        Rayfield:Notify({ Title="Kiba Tech", Content="Made by Molten 🔥", Duration=3, Image=4483345998 })
+        Rayfield:Notify({ Title="Kiba Tech", Content="Loading...", Duration=2, Image=4483345998 })
         loadstring(game:HttpGet("https://raw.githubusercontent.com/Defy-cloud/Scripts/refs/heads/main/KibaTech"))()
     end)
 end })
 
-CombatTab:CreateButton({ Name=" Oreo Dash", Callback=function()
+CombatTab:CreateButton({ Name="Oreo Dash", Callback=function()
     task.spawn(function()
-        Rayfield:Notify({ Title="Oreo Dash", Content="Made by Molten 🔥", Duration=3, Image=4483345998 })
+        Rayfield:Notify({ Title="Oreo Dash", Content="Loading...", Duration=2, Image=4483345998 })
         loadstring(game:HttpGet("https://raw.githubusercontent.com/letuankiet09812345-cmyk/Testkiba/refs/heads/main/Oreo%20Tech%20Script%20By%20YQANTG.txt"))()
     end)
 end })
 
-CombatTab:CreateButton({ Name=" Kyoto Tech", Callback=function()
+CombatTab:CreateButton({ Name="Kyoto Tech", Callback=function()
     task.spawn(function()
-        Rayfield:Notify({ Title="Kyoto Tech", Content="Made by Molten 🔥", Duration=3, Image=4483345998 })
+        Rayfield:Notify({ Title="Kyoto Tech", Content="Loading...", Duration=2, Image=4483345998 })
         loadstring(game:HttpGet("https://raw.githubusercontent.com/Cyborg883/KyotoTechRework/refs/heads/main/Protected_9378660372508532.lua"))()
     end)
 end })
 
 CombatTab:CreateButton({ Name="Floater Lethal", Callback=function()
     task.spawn(function()
-        Rayfield:Notify({ Title="Floater Lethal", Content="Made by Molten 🔥", Duration=3, Image=4483345998 })
+        Rayfield:Notify({ Title="Floater Lethal", Content="Loading...", Duration=2, Image=4483345998 })
         loadstring(game:HttpGet("https://api.jnkie.com/api/v1/luascripts/public/a23acf82fb18b827dca096e149ab0272fc74ea9bb8153cd43e44555acb943c86/download"))()
     end)
 end })
@@ -427,7 +430,7 @@ UtilityTab:CreateSection("Scripts")
 
 UtilityTab:CreateButton({ Name="🌙 Void Kill", Callback=function()
     task.spawn(function()
-        Rayfield:Notify({ Title="Void Kill", Content="Made by Molten 🔥", Duration=3, Image=4483362458 })
+        Rayfield:Notify({ Title="Void Kill", Content="Loading...", Duration=2, Image=4483362458 })
         loadstring(game:HttpGet("https://raw.githubusercontent.com/Reallyools/Reallyools/refs/heads/main/VoidKill2.1"))()
     end)
 end })
@@ -436,14 +439,14 @@ UtilityTab:CreateSection("Cosmetics")
 
 UtilityTab:CreateButton({ Name="💀 Headless", Callback=function()
     task.spawn(function()
-        Rayfield:Notify({ Title="Headless", Content="Made by Molten 🔥", Duration=3, Image=4483362458 })
+        Rayfield:Notify({ Title="Headless", Content="Loading...", Duration=2, Image=4483362458 })
         loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Fe-Headless-122249"))()
     end)
 end })
 
 UtilityTab:CreateButton({ Name="🦴 Korblox", Callback=function()
     task.spawn(function()
-        Rayfield:Notify({ Title="Korblox", Content="Made by Molten 🔥", Duration=3, Image=4483362458 })
+        Rayfield:Notify({ Title="Korblox", Content="Loading...", Duration=2, Image=4483362458 })
         loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Korblox-All-136498"))()
     end)
 end })
@@ -454,7 +457,6 @@ end })
 
 UtilityTab:CreateSection("🌾 Farming")
 
--- ✅ MAIN FARM BUTTON
 UtilityTab:CreateButton({
     Name = "⚔️ Main Farm",
     Callback = function()
@@ -465,7 +467,6 @@ UtilityTab:CreateButton({
             local TeleService = game:GetService("TeleportService")
             local GuiSvc      = game:GetService("StarterGui")
 
-            -- Job ID GUI
             local old = CoreGui:FindFirstChild("MoltenMainGui")
             if old then old:Destroy() end
 
@@ -558,11 +559,9 @@ UtilityTab:CreateButton({
             Close.TextSize = 30
             Close.MouseButton1Down:Connect(function() JobIDGui:Destroy() end)
 
-            -- Load Phantasm
             loadstring(game:HttpGet("https://raw.githubusercontent.com/ATrainz/Phantasm/refs/heads/main/Games/TSB.lua"))()
             task.wait(10)
 
-            -- Configs
             local SELECTED_MOVE    = "Scatter"
             local TIME_AFTER_SPAWN = 0.4
             local SPAM_DURATION    = 3
@@ -570,23 +569,19 @@ UtilityTab:CreateButton({
             local TIME_AFTER_SPAM  = 2
             local ADDITIONAL_KILLS = 500
             local MAX_TOTAL_KILLS  = 10000
-            -- ✅ FASTER teleport 0.01
             local TP_POSITION      = Vector3.new(438.84, 439.51, -375.48)
 
             local totalKills = 0
             local initialKillsRecorded = false
             local initialKillsValue = 0
 
-            -- Anti AFK
             pcall(function()
                 local VU = game:GetService("VirtualUser")
                 Players.LocalPlayer.Idled:Connect(function()
-                    VU:CaptureController()
-                    VU:ClickButton2(Vector2.new())
+                    VU:CaptureController() VU:ClickButton2(Vector2.new())
                 end)
             end)
 
-            -- Anti Mod
             local moderatorIDs = {
                 268312397,2627262431,82610981,292707170,449404798,221681529,
                 41022405,56721213,38307780,2039323684,1041867508,7340338226,
@@ -607,7 +602,7 @@ UtilityTab:CreateButton({
             end)
 
             local function closeGame()
-                GuiSvc:SetCore("SendNotification", {Title="Total Target Reached", Text="Closing... "..totalKills.." kills", Duration=5})
+                GuiSvc:SetCore("SendNotification", {Title="Target Reached", Text="Closing... "..totalKills.." kills", Duration=5})
                 task.wait(3) game:Shutdown()
             end
 
@@ -618,7 +613,6 @@ UtilityTab:CreateButton({
                 TeleService:Teleport(game.PlaceId)
             end
 
-            -- Kill tracker
             task.spawn(function()
                 local ls, kills
                 repeat task.wait(1) ls = Players.LocalPlayer:FindFirstChild("leaderstats") until ls
@@ -641,7 +635,6 @@ UtilityTab:CreateButton({
                 end
             end)
 
-            -- ✅ FASTER teleport loop 0.01
             task.spawn(function()
                 repeat task.wait() until Players.LocalPlayer.Character and Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
                 while true do
@@ -653,7 +646,6 @@ UtilityTab:CreateButton({
                 end
             end)
 
-            -- Spin emote
             local function spinEmote()
                 local args = {[1]={["Goal"]="Emote Spin"}}
                 while true do
@@ -672,7 +664,6 @@ UtilityTab:CreateButton({
             Players.LocalPlayer.CharacterAdded:Connect(onCharAdded)
             if Players.LocalPlayer.Character then onCharAdded(Players.LocalPlayer.Character) end
 
-            -- Move farming
             local moveArgs
             local processedHumanoids = {}
             local defeatedCount = 0
@@ -739,17 +730,13 @@ UtilityTab:CreateButton({
 
             Players.LocalPlayer.CharacterAdded:Connect(setupCharacter)
             if Players.LocalPlayer.Character then setupCharacter(Players.LocalPlayer.Character) end
-
             task.wait(10)
             local c = Players.LocalPlayer.Character
             if c and c:FindFirstChild("Humanoid") then c.Humanoid.Health = 0 end
-
-            Rayfield:Notify({ Title="Main Farm", Content="✅ Running!", Duration=4, Image=4483362458 })
         end)
     end,
 })
 
--- ✅ ALT FARM BUTTON
 UtilityTab:CreateButton({
     Name = "🤖 Alt Farm",
     Callback = function()
@@ -759,14 +746,11 @@ UtilityTab:CreateButton({
             local CoreGui = game:GetService("CoreGui")
             local GuiSvc  = game:GetService("StarterGui")
 
-            -- Destroy old
             local old = CoreGui:FindFirstChild("MoltenAltGui")
             if old then old:Destroy() end
 
-            -- FPS cap
             pcall(function() setfpscap(10) end)
 
-            -- Anti AFK
             pcall(function()
                 local VU = game:GetService("VirtualUser")
                 Players.LocalPlayer.Idled:Connect(function()
@@ -774,7 +758,6 @@ UtilityTab:CreateButton({
                 end)
             end)
 
-            -- Anti Mod
             local modIDs = {
                 268312397,2627262431,82610981,292707170,449404798,221681529,
                 41022405,56721213,38307780,2039323684,1041867508,7340338226,
@@ -802,7 +785,6 @@ UtilityTab:CreateButton({
                 end)
             end)
 
-            -- ✅ FASTER teleport loop 0.01
             local altTpPos = Vector3.new(438.84, 439.51, -375.48)
             task.spawn(function()
                 while true do
@@ -816,7 +798,6 @@ UtilityTab:CreateButton({
                 end
             end)
 
-            -- Noclip
             local noclipEnabled = true
             local function disableCollisions(char)
                 if not char then return end
@@ -836,9 +817,7 @@ UtilityTab:CreateButton({
                     end
                 end)
             end)
-            if Players.LocalPlayer.Character then
-                disableCollisions(Players.LocalPlayer.Character)
-            end
+            if Players.LocalPlayer.Character then disableCollisions(Players.LocalPlayer.Character) end
             RunService.Stepped:Connect(function()
                 if not noclipEnabled or not Players.LocalPlayer.Character then return end
                 for _, part in pairs(Players.LocalPlayer.Character:GetDescendants()) do
@@ -848,7 +827,6 @@ UtilityTab:CreateButton({
                 end
             end)
 
-            -- Nuclear reset
             local function nuclearReset()
                 local c = Players.LocalPlayer.Character
                 if not c then return end
@@ -858,7 +836,6 @@ UtilityTab:CreateButton({
                 task.wait(1)
             end
 
-            -- Data storage
             local function dsSave(key, value)
                 if writefile then pcall(function() writefile("alt_farm_"..key..".txt", tostring(value)) end) end
             end
@@ -870,7 +847,6 @@ UtilityTab:CreateButton({
                 return nil
             end
 
-            -- Alt Farm GUI
             local existingGui = CoreGui:FindFirstChild("HealthMonitorGui")
             if existingGui then existingGui:Destroy() end
 
@@ -963,7 +939,6 @@ UtilityTab:CreateButton({
             menuButton.Parent = inputFrame
             Instance.new("UICorner", menuButton).CornerRadius = UDim.new(0, 4)
 
-            -- Players list frame
             local playersListFrame = Instance.new("Frame")
             playersListFrame.Size = UDim2.new(0, 280, 0, 300)
             playersListFrame.Position = UDim2.new(0.5, -140, 0.5, -150)
@@ -994,9 +969,7 @@ UtilityTab:CreateButton({
             closeButton.TextSize = 14
             closeButton.Parent = playersListTitle
             Instance.new("UICorner", closeButton).CornerRadius = UDim.new(0, 4)
-            closeButton.MouseButton1Click:Connect(function()
-                playersListFrame.Visible = false
-            end)
+            closeButton.MouseButton1Click:Connect(function() playersListFrame.Visible = false end)
 
             local scrollFrame = Instance.new("ScrollingFrame")
             scrollFrame.Size = UDim2.new(1, -10, 1, -40)
@@ -1045,7 +1018,7 @@ UtilityTab:CreateButton({
                         playersListFrame.Visible = false
                     end)
                 end
-                scrollFrame.CanvasSize = UDim2.new(0,0,0,math.max(#plrs*35, scrollFrame.AbsoluteSize.Y))
+                scrollFrame.CanvasSize = UDim2.new(0,0,0,math.max(#plrs*35,scrollFrame.AbsoluteSize.Y))
             end
 
             Players.PlayerAdded:Connect(function() if playersListFrame.Visible then updatePlayersList() end end)
@@ -1181,7 +1154,7 @@ local function getServerPlayers()
 end
 
 local altBalantDropdown = UtilityTab:CreateDropdown({
-    Name = "👥 Alt Balant Player List",
+    Name = "Alt Balant Player List",
     Options = getServerPlayers(),
     CurrentOption = {""},
     MultipleOptions = false,
@@ -1192,7 +1165,7 @@ local altBalantDropdown = UtilityTab:CreateDropdown({
 })
 
 UtilityTab:CreateButton({
-    Name = "🔄 Refresh Player List",
+    Name = " Refresh Player List",
     Callback = function()
         local newList = getServerPlayers()
         altBalantDropdown:Refresh(newList, true)
@@ -1201,7 +1174,7 @@ UtilityTab:CreateButton({
 })
 
 UtilityTab:CreateToggle({
-    Name = "💥 Alt Balant", CurrentValue = false, Flag = "AltBalant",
+    Name = " Alt Balant", CurrentValue = false, Flag = "AltBalant",
     Callback = function(val)
         altBalantActive = val
         if val then
@@ -1252,7 +1225,6 @@ local function doXCZ()
     if not char then xczCooldown = false return end
     local hrp = char:FindFirstChild("HumanoidRootPart")
     if not hrp then xczCooldown = false return end
-
     VirtualInputManager:SendKeyEvent(true,  Enum.KeyCode.Four, false, game) task.wait(0.05)
     VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Four, false, game) task.wait(0.1)
     VirtualInputManager:SendKeyEvent(true,  Enum.KeyCode.W,    false, game) task.wait(0.01)
